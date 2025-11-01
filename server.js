@@ -3,6 +3,8 @@ const http = require('http');
 const socketIo = require('socket.io');
 const cors = require('cors');
 const path = require('path');
+const crypto = require('crypto');
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
@@ -29,8 +31,14 @@ let revenue = {
   entryTickets: 0
 };
 
-// Admin password (should be in env variable)
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+// Admin password (must be set in env variable)
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+
+if (!ADMIN_PASSWORD) {
+  console.error('ERROR: ADMIN_PASSWORD environment variable is not set!');
+  console.error('Please set ADMIN_PASSWORD before starting the server.');
+  process.exit(1);
+}
 
 // Routes
 app.get('/api/health', (req, res) => {
@@ -61,7 +69,7 @@ app.post('/api/schedule', (req, res) => {
   }
   
   const newEvent = {
-    id: Date.now(),
+    id: crypto.randomUUID(),
     ...event,
     createdAt: new Date()
   };
@@ -80,7 +88,7 @@ app.delete('/api/schedule/:id', (req, res) => {
     return res.status(401).json({ error: 'Unauthorized' });
   }
   
-  schedule = schedule.filter(event => event.id !== parseInt(id));
+  schedule = schedule.filter(event => event.id !== id);
   io.emit('scheduleUpdate', schedule);
   res.json({ success: true });
 });
@@ -109,7 +117,7 @@ app.post('/api/purchase', (req, res) => {
     // Add raffle entries
     for (let i = 0; i < quantity; i++) {
       tattooRaffleEntries.push({
-        id: Date.now() + i,
+        id: crypto.randomUUID(),
         name,
         phone,
         timestamp: new Date()
@@ -126,7 +134,7 @@ app.post('/api/purchase', (req, res) => {
     // Add raffle entries
     for (let i = 0; i < quantity; i++) {
       merchRaffleEntries.push({
-        id: Date.now() + i,
+        id: crypto.randomUUID(),
         name,
         phone,
         timestamp: new Date()
@@ -139,7 +147,7 @@ app.post('/api/purchase', (req, res) => {
   
   // Record sale
   const sale = {
-    id: Date.now(),
+    id: crypto.randomUUID(),
     type: itemType,
     quantity,
     price,

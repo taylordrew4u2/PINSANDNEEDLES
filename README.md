@@ -133,9 +133,14 @@ The server will serve the built React app and API on the same port.
 
 ## Default Admin Password
 
-Default password: `admin123`
+**Important**: You MUST set the `ADMIN_PASSWORD` environment variable before starting the server. The server will not start without it.
 
-**Important**: Change this in production by setting the `ADMIN_PASSWORD` environment variable!
+For development:
+```bash
+export ADMIN_PASSWORD=your_secure_password
+```
+
+For production, set this via your hosting platform's environment variable configuration.
 
 ## License
 

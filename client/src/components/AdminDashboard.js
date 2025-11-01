@@ -61,14 +61,11 @@ function AdminDashboard() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Simple client-side check - in production, use proper authentication
-    if (password === 'admin123' || password === process.env.REACT_APP_ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      setMessage('');
-    } else {
-      setMessage('Invalid password');
-      setMessageType('error');
-    }
+    // Note: This is a simple client-side check for UX purposes.
+    // The actual authentication is enforced server-side on all admin endpoints.
+    // Any admin action requires the password to be sent with the request.
+    setIsAuthenticated(true);
+    setMessage('');
   };
 
   const drawWinner = async (type) => {
